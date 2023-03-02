@@ -1,0 +1,61 @@
+const http = require("http"),
+  fs = require("fs"),
+  url = require("url");
+
+http
+  .createServer((request, response) => {
+    let addr = request.url,
+      q = url.parse(addr, true),
+      filePath = "";
+
+    fs.appendFile(
+      "log.txt",
+      "URL: " + addr + "\nTimestamp: " + new Date() + "\n\n",
+      (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Added to log.");
+        }
+      }
+    );
+
+    if (q.pathname.includes("documentation")) {
+      filePath = __dirname + "/documentation.html";
+    } else {
+      filePath = "index.html";
+    }
+
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        throw err;
+      }
+
+      response.writeHead(200, { "Content-Type": "text/html" });
+      response.write(data);
+      response.end();
+    });
+  })
+  .listen(8080);
+console.log("My test server is running on Port 8080.");
+URL: /
+Timestamp: Wed Mar 01 2023 16:29:20 GMT-0800 (Pacific Standard Time)
+
+URL: /
+Timestamp: Wed Mar 01 2023 17:11:51 GMT-0800 (Pacific Standard Time)
+
+URL: /favicon.ico
+Timestamp: Wed Mar 01 2023 17:11:51 GMT-0800 (Pacific Standard Time)
+
+URL: /apple-touch-icon-precomposed.png
+Timestamp: Wed Mar 01 2023 17:11:51 GMT-0800 (Pacific Standard Time)
+
+URL: /apple-touch-icon.png
+Timestamp: Wed Mar 01 2023 17:11:51 GMT-0800 (Pacific Standard Time)
+
+URL: /
+Timestamp: Wed Mar 01 2023 17:11:57 GMT-0800 (Pacific Standard Time)
+
+URL: /documentation
+Timestamp: Wed Mar 01 2023 17:12:04 GMT-0800 (Pacific Standard Time)
+
