@@ -6,3 +6,6 @@
 
 .hidden_file
 **/.hidden_file
+
+node_modules
+**/node_modules
