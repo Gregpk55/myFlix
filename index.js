@@ -6,6 +6,7 @@ const express = require("express"),
   methodOverride = require('method-override');
 
   const app = express();
+  app.use(morgan("common"));
 
   app.use(bodyParser.urlencoded({
     extended: true
@@ -14,8 +15,8 @@ const express = require("express"),
   app.use(bodyParser.json());
   app.use(methodOverride());
 
-  app.get("/topMovies", (req, res) => {
-    const topMovies = [
+  app.get("/movies", (req, res) => {
+    const movies = [
       {
         title: "Blow",
         year: 2001,
@@ -23,11 +24,11 @@ const express = require("express"),
       },
     ];
     //Response
-    res.json(topMovies);
+    res.json(movies);
 });
 
 app.use(express.static("public"));
-app.use(morgan("common"));
+
 
 app.get("/", (req, res) => {
   console.log("Welcome to myFlix");
