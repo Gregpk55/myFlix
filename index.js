@@ -15,7 +15,7 @@ const express = require("express"),
   app.use(bodyParser.json());
   app.use(methodOverride());
 
-  app.get("/movies", (req, res) => {
+  app.get("/movies", morgon('common'), (req, res) => {
     const movies = [
       {
         title: "Blow",
