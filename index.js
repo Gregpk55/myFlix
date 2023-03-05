@@ -1,7 +1,6 @@
 const express = require("express"),
-  morgan = require("morgan"),
-  fs = require("fs"), 
-  path = require("path");
+  morgan = require("morgan")
+  
   const bodyParser = require('body-parser'),
   methodOverride = require('method-override');
 
@@ -15,7 +14,7 @@ const express = require("express"),
   app.use(bodyParser.json());
   app.use(methodOverride());
 
-  app.get("/movies", morgan('common'), (req, res) => {
+  app.get("/movies", (req, res) => {
     const movies = [
       {
         title: "Blow",
@@ -35,6 +34,8 @@ app.get("/", (req, res) => {
   res.send("Welcome to myFlix!");
 });
 
+// new end point
+
 // Morgan middleware error function
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -46,4 +47,4 @@ app.listen(8080, () => {
   console.log("Your app is listening to port 8080.");
 });
 
-app.use(express.static("public"));
+
