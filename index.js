@@ -16,10 +16,7 @@ const Users = Models.User;
 mongoose.connect('mongodb://localhost:27017/cfDB',
  { useNewUrlParser: true, useUnifiedTopology: true });
 
-
-
-
-const app = express();
+ const app = express();
 app.use(morgan("common"));
 
 app.use(
@@ -30,6 +27,11 @@ app.use(
 
 app.use(bodyParser.json());
 app.use(methodOverride());
+
+let auth = require("./auth")(app);
+
+const passport = require("passport");
+require("./passport");
 
 let users = [
   {
@@ -233,7 +235,8 @@ app.post('/users', async (req, res) => {
 });
 
 // Get all users
-app.get('/users', async (req, res) => {
+app.get('/users',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const users = await Users.find();
     res.status(200).json(users);
@@ -244,7 +247,8 @@ app.get('/users', async (req, res) => {
 });
 
 // Get a user by username
-app.get('/users/:Username', async (req, res) => {
+app.get('/users/:Username',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const user = await Users.findOne({ Username: req.params.Username });
     if (user) {
@@ -259,7 +263,8 @@ app.get('/users/:Username', async (req, res) => {
 });
 
 // Update a user's info, by username
-app.put('/users/:Username', async (req, res) => {
+app.put('/users/:Username',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const updatedUser = await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -282,7 +287,8 @@ app.put('/users/:Username', async (req, res) => {
 
 
 // Add a movie to a user's list of favorites
-app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+app.post('/users/:Username/movies/:MovieID',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const updatedUser = await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -297,7 +303,8 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
 });
 
 // Remove a movie from a user's list of favorites
-app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+app.delete('/users/:Username/movies/:MovieID',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const updatedUser = await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -313,7 +320,8 @@ app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
 
 
 // Get all movies
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const movies = await Movies.find();
     res.status(200).json(movies);
@@ -324,7 +332,8 @@ app.get('/movies', async (req, res) => {
 });
 
 // Get a movie by title
-app.get('/movies/:Title', async (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const movie = await Movies.findOne({ Title: req.params.Title });
     if (movie) {
@@ -339,7 +348,8 @@ app.get('/movies/:Title', async (req, res) => {
 });
 
 //Genre Search
-app.get("/movies/genre/:genreName", async (req, res) => {
+app.get("/movies/genre/:genreName",passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const movie = await Movies.findOne({ 'Genre.Name': req.params.genreName });
     if (movie) {
@@ -353,7 +363,8 @@ app.get("/movies/genre/:genreName", async (req, res) => {
   }
 });
 //Director Search
-app.get("/movies/director/:directorName", async (req, res) => {
+app.get("/movies/director/:directorName", passport.authenticate('jwt', 
+{session: false}),async (req, res) => {
   try {
     const movie = await Movies.findOne({ 'Director.Name': req.params.directorName });
     if (movie) {
@@ -367,7 +378,8 @@ app.get("/movies/director/:directorName", async (req, res) => {
   }
 });
 //DELETE Movie
-app.delete("/users/:id/:movieTitle", async (req, res) => {
+app.delete("/users/:id/:movieTitle",passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const { id, movieTitle } = req.params;
     let user = users.find((user) => user.id == id);
@@ -387,7 +399,8 @@ app.delete("/users/:id/:movieTitle", async (req, res) => {
   }
 });
 // Delete a user by username
-app.delete('/users/:Username', async (req, res) => {
+app.delete('/users/:Username',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
   try {
     const user = await Users.findOneAndRemove({ Username: req.params.Username });
     if (!user) {
