@@ -4,36 +4,34 @@ const express = require("express"),
   methodOverride = require("method-override"),
   uuid = require("uuid"),
   mongoose = require("mongoose"),
-  Models = require("./models.js");
-const { update } = require("lodash");
+  Models = require("./models.js"),
+  { check, validationResult } = require('express-validator'),
+  cors = require('cors'),
+  passport = require("passport");
 
-const { check, validationResult } = require('express-validator');
+// Create Express app
+const app = express();
 
-const cors = require('cors');
+// Define middleware
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
+app.use(methodOverride());
+app.use(morgan("common"));
 
-const Movies = Models.Movie;
-const Users = Models.User;
-
-//Connect Mongoose
+// Connect Mongoose
 mongoose.connect('mongodb://localhost:27017/cfDB',
  { useNewUrlParser: true, useUnifiedTopology: true });
 
- const app = express();
-app.use(morgan("common"));
+// Define models
+const Movies = Models.Movie;
+const Users = Models.User;
 
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-
-app.use(bodyParser.json());
-app.use(methodOverride());
-
-let auth = require("./auth")(app);
-const passport = require("passport");
+// Passport middleware
 require("./passport");
+
 
 // Cors middleware
 // let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
@@ -52,41 +50,41 @@ require("./passport");
 //   })
 // );
 
-//Add a user
-app.post('/users',
-[
+// Add a user
+app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
   check('Email', 'Email does not appear to be valid').isEmail()
-],
- async (req, res) => {
-   // check the validation object for errors
-   let errors = validationResult(req);
-
-   if (!errors.isEmpty()) {
-     return res.status(422).json({ errors: errors.array() });
-   }
+], async (req, res) => {
   try {
-    const hashedPassword = await Users.hashPassword(req.body.Password);
+    // check the validation object for errors
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    
     const user = await Users.findOne({ Username: req.body.Username });
 
     if (user) {
-      //If the user is found, send a response that it already exists
-      return res.status(400).send(req.body.Username + ' already exists');
+      // If the user already exists, send an appropriate error response
+      return res.status(400).send('Username already exists.');
     }
 
-    const newUser = await Users.create({
+    const hashedPassword = await Users.hashPassword(req.body.Password);
+    const newUser = new Users({
       Username: req.body.Username,
       Password: hashedPassword,
       Email: req.body.Email,
       Birthday: req.body.Birthday
     });
 
-    res.status(201).json(newUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error: ' + error);
+    const addedUser = await newUser.save();
+    res.status(201).json(addedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error adding user.');
   }
 });
 
@@ -190,11 +188,9 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Somthing Broke!");
 });
-//Connect Mongoose
-mongoose.connect('mongodb://localhost:27017/cfDB',
- { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Port 8080 listen request
-app.listen(8080, () => {
-  console.log("Your app is listening to port 8080.");
+// Listen for requests
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () => {
+  console.log('Listening on Port ' + port);
 });
