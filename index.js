@@ -183,6 +183,118 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
   }
 });
 
+// Remove a movie from a user's list of favorites
+app.delete('/users/:Username/movies/:MovieID',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
+  try {
+    const updatedUser = await Users.findOneAndUpdate(
+      { Username: req.params.Username },
+      { $pull: { FavoriteMovies: req.params.MovieID } },
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
+});
+
+
+// Get all movies
+app.get('/movies', passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
+  try {
+    const movies = await Movies.find();
+    res.status(200).json(movies);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
+});
+// Get a movie by title
+app.get('/movies/:Title', passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
+  try {
+    const movie = await Movies.findOne({ Title: req.params.Title });
+    if (movie) {
+      res.json(movie);
+    } else {
+      res.status(404).send('Movie not found');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
+});
+
+//Genre Search
+app.get("/movies/genre/:genreName",passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
+  try {
+    const movie = await Movies.findOne({ 'Genre.Name': req.params.genreName });
+    if (movie) {
+      res.json(movie.Genre);
+    } else {
+      res.status(404).send('Movie not found');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
+});
+//Director Search
+app.get("/movies/director/:directorName", passport.authenticate('jwt', 
+{session: false}),async (req, res) => {
+  try {
+    const movie = await Movies.findOne({ 'Director.Name': req.params.directorName });
+    if (movie) {
+      res.json(movie.Director);
+    } else {
+      res.status(404).send('Movie not found');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
+});
+//DELETE Movie
+app.delete("/users/:id/:movieTitle",passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
+  try {
+    const { id, movieTitle } = req.params;
+    let user = users.find((user) => user.id == id);
+
+    if (user) {
+      user.favouriteMovie = user.favouriteMovie.filter(
+        (title) => title !== movieTitle
+      );
+      res.status(200).send("movie has been deleted!");
+      console.log(movieTitle);
+    } else {
+      res.status(400).send("movie not added");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+// Delete a user by username
+app.delete('/users/:Username',passport.authenticate('jwt', 
+{session: false}), async (req, res) => {
+  try {
+    const user = await Users.findOneAndRemove({ Username: req.params.Username });
+    if (!user) {
+      res.status(400).send(req.params.Username + ' was not found');
+    } else {
+      res.status(200).send(req.params.Username + ' was deleted.');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  }
+});
+
+
 // Morgan middleware error function
 app.use((err, req, res, next) => {
   console.error(err.stack);
