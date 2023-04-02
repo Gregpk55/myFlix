@@ -5,9 +5,10 @@ const express = require("express"),
   uuid = require("uuid"),
   mongoose = require("mongoose"),
   Models = require("./models.js"),
-  { check, validationResult } = require('express-validator'),
   cors = require('cors'),
   passport = require("passport");
+
+  const { check, validationResult } = require("express-validator");
 
 // Create Express app
 const app = express();
@@ -22,8 +23,8 @@ app.use(methodOverride());
 app.use(morgan("common"));
 
 // Connect Mongoose
-mongoose.connect('mongodb://localhost:27017/cfDB',
- { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/cfDB')
+.catch((error) => handleError(error));
 
 // Define models
 const Movies = Models.Movie;
@@ -31,24 +32,6 @@ const Users = Models.User;
 
 // Passport middleware
 require("./passport");
-
-
-// Cors middleware
-// let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.indexOf(origin) === -1) {
-//         let message =
-//           `The CORS policy for this application doesn’t allow access from origin ` +
-//           origin;
-//         return callback(new Error(message), false);
-//       }
-//       return callback(null, true);
-//     },
-//   })
-// );
 
 // Add a user
 app.post('/users', [
@@ -262,7 +245,7 @@ app.delete("/users/:id/:movieTitle",passport.authenticate('jwt',
 {session: false}), async (req, res) => {
   try {
     const { id, movieTitle } = req.params;
-    let user = users.find((user) => user.id == id);
+    let user = user.find((user) => user.id == id);
 
     if (user) {
       user.favouriteMovie = user.favouriteMovie.filter(
@@ -301,8 +284,9 @@ app.use((err, req, res, next) => {
   res.status(500).send("Somthing Broke!");
 });
 
-// Listen for requests
+//Listen for requests
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
   console.log('Listening on Port ' + port);
 });
+
