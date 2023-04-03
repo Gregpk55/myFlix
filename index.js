@@ -23,8 +23,9 @@ app.use(methodOverride());
 app.use(morgan("common"));
 
 // Connect Mongoose
-mongoose.connect('mongodb://localhost:27017/cfDB')
-.catch((error) => handleError(error));
+//mongoose.connect('mongodb://localhost:27017/cfDB')
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 // Define models
 const Movies = Models.Movie;
@@ -289,4 +290,6 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
   console.log('Listening on Port ' + port);
 });
+
+
 
