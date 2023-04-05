@@ -25,7 +25,7 @@ app.use(morgan("common"));
 // Connect Mongoose
 //mongoose.connect('mongodb://localhost:27017/cfDB')
 mongoose.connect( process.env.CONNECTION_URI,
-   { useNewUrlParser: true, useUnifiedTopology: true });
+  { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 // Define models
