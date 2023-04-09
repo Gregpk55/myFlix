@@ -7,8 +7,7 @@ const express = require("express"),
   Models = require("./models.js"),
   cors = require('cors'),
   passport = require("passport");
-  require('dotenv').config();
-
+  
   const { check, validationResult } = require("express-validator");
 
 // Create Express app
