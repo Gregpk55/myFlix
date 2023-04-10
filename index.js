@@ -24,10 +24,8 @@ app.use(morgan("common"));
 
 // Connect Mongoose
 //mongoose.connect('mongodb://localhost:27017/cfDB')
-mongoose.createConnection( process.env.CONNECTION_URI,
-  { useNewUrlParser: true, useUnifiedTopology: true })
-    .then (() => console.log('connected to mongoDB'))
-    .catch ((err) => console.error(err));
+mongoose.connect(process.env.CONNECTION_URI, 
+  { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 // Define models
@@ -37,6 +35,9 @@ const Users = Models.User;
 // Passport middleware
 require("./passport");
 
+app.get("/", (req, res) => {
+  res.send("Welcome to MyFlix!");
+});
 // Add a user
 app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
