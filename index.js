@@ -24,7 +24,7 @@ app.use(morgan("common"));
 
 // Connect Mongoose
 //mongoose.connect('mongodb://localhost:27017/cfDB')
-mongoose.connect( process.env.CONNECTION_URI,
+mongoose.createConnection( process.env.CONNECTION_URI,
   { useNewUrlParser: true, useUnifiedTopology: true })
     .then (() => console.log('connected to mongoDB'))
     .catch ((err) => console.error(err));
