@@ -13,6 +13,9 @@ const express = require("express"),
 // Create Express app
 const app = express();
 
+//Authenticate+Login
+const auth = require('./auth')(app);
+
 // Define middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -38,6 +41,7 @@ require("./passport");
 app.get("/", (req, res) => {
   res.send("Welcome to MyFlix!");
 });
+
 // Add a user
 app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
