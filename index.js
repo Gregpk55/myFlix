@@ -203,7 +203,7 @@ app.delete(
 );
 
 // Get all movies
-app.get('/movies',  async (req, res) => {
+app.get('/movies', cors({ origin: false }), async (req, res) => {
   try {
     const movies = await Movies.find();
     res.status(200).json(movies);
