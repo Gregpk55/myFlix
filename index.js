@@ -17,7 +17,9 @@ const app = express();
 const auth = require('./auth')(app);
 
 // Define middleware
-app.use(cors());
+app.use(cors({
+  orgin: 'http://localhost:1234'
+}));
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
