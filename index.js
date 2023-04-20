@@ -16,6 +16,7 @@ const app = express();
 //Authenticate+Login
 const auth = require('./auth')(app);
 
+
 // Define middleware
 let allowedOrigins = [
   'http://localhost:1234',
@@ -34,6 +35,14 @@ origin: (origin, callback) => {
   return callback(null, true);
 }
 }));
+
+// Middleware to enable CORS
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:1234");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(
