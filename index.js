@@ -13,8 +13,6 @@ const { check, validationResult } = require('express-validator');
 // Create Express app
 const app = express();
 
-//Authenticate+Login
-const auth = require('./auth')(app);
 
 // Define middleware
 app.use(cors());
@@ -26,6 +24,9 @@ app.use(
 );
 app.use(methodOverride());
 app.use(morgan('common'));
+
+//Authenticate+Login
+const auth = require('./auth')(app);
 
 // Connect Mongoose
 //mongoose.connect('mongodb://localhost:27017/cfDB')
