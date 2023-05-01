@@ -29,11 +29,11 @@ app.use(morgan('common'));
 const auth = require('./auth')(app);
 
 // Connect Mongoose
-//mongoose.connect('mongodb://localhost:27017/cfDB')
-mongoose.connect(process.env.CONNECTION_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect('mongodb://localhost:27017/cfDB')
+//mongoose.connect(process.env.CONNECTION_URI, {
+ // useNewUrlParser: true,
+  //useUnifiedTopology: true,
+//});
 
 // Define models
 const Movies = Models.Movie;
@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
 app.post(
   '/users',
   [
-    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username is required').isLength({ min: 3 }),
     check(
       'Username',
       'Username contains non alphanumeric characters - not allowed.'
