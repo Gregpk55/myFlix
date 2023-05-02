@@ -13,7 +13,6 @@ const { check, validationResult } = require('express-validator');
 // Create Express app
 const app = express();
 
-
 // Define middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -29,11 +28,11 @@ app.use(morgan('common'));
 const auth = require('./auth')(app);
 
 // Connect Mongoose
-mongoose.connect('mongodb://localhost:27017/cfDB')
-//mongoose.connect(process.env.CONNECTION_URI, {
- // useNewUrlParser: true,
-  //useUnifiedTopology: true,
-//});
+//mongoose.connect('mongodb://localhost:27017/cfDB')
+mongoose.connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Define models
 const Movies = Models.Movie;
