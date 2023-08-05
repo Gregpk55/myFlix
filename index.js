@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
 app.post(
   '/users',
   [
-    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username is required').isLength({ min: 3 }),
     check(
       'Username',
       'Username contains non alphanumeric characters - not allowed.'
@@ -120,7 +120,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
 app.put(
   '/users/:Username',
   [
-    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username is required').isLength({ min: 3 }),
     check(
       'Username',
       'Username contains non alphanumeric characters - not allowed.'
