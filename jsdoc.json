@@ -1,0 +1,12 @@
+{
+    "source": {
+      "include": ["./index.js", "./auth.js", "./models.js"],
+      "exclude": ["node_modules"]
+    },
+    "opts": {
+      "destination": "./out/",
+      "recurse": true,
+      "verbose": true
+    }
+  }
+  
